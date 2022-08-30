@@ -4,6 +4,7 @@ import cn.ltx.reggie.common.R;
 import cn.ltx.reggie.dto.OrdersDto;
 import cn.ltx.reggie.entity.Orders;
 import cn.ltx.reggie.service.OrderService;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +60,27 @@ public class OrderController {
         log.info("orders => {}", orders);
         return service.again(orders);
     }
+
+    /**
+     * 后台订单列表条件分页查询
+     * @param page
+     * @param pageSize
+     * @param number
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    @GetMapping("/page")
+    public R<IPage<OrdersDto>> page(int page, int pageSize, String number, String beginTime, String endTime){
+        log.info("page => {},pageSize => {}, number => {}, beginTime => {}, endTime => {}", page, pageSize, number, beginTime, endTime);
+        return service.page(page, pageSize, number, beginTime, endTime);
+    }
+    @PutMapping
+    public R<String> updateStatus(@RequestBody Orders orders){
+        log.info("orders => {}", orders);
+        service.update(new UpdateWrapper<Orders>().eq("id", orders.getId()).set("status", orders.getStatus()));
+        return R.success("success");
+    }
+
 
 }

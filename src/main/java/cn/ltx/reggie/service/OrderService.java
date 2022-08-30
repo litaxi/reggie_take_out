@@ -40,4 +40,15 @@ public interface OrderService extends IService<Orders> {
      * @return
      */
     R<String> again(Orders orders);
+
+    /**
+     * 后台订单列表条件分页查询
+     * @param page
+     * @param pageSize
+     * @param number
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    R<IPage<OrdersDto>> page(int page, int pageSize, String number, String beginTime, String endTime);
 }

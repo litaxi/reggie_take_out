@@ -42,4 +42,25 @@ public class GlobalExceptionHandler {
         log.error(ex.getMessage());
         return R.error(ex.getMessage());
     }
+   /* @InitBinder
+    protected void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(LocalDate.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalDate.parse(text, DateTimeFormatter.ofPattern(JacksonObjectMapper.DEFAULT_DATE_FORMAT)));
+            }
+        });
+        binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalDateTime.parse(text, DateTimeFormatter.ofPattern(JacksonObjectMapper.DEFAULT_DATE_TIME_FORMAT)));
+            }
+        });
+        binder.registerCustomEditor(LocalTime.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String text) throws IllegalArgumentException {
+                setValue(LocalTime.parse(text, DateTimeFormatter.ofPattern(JacksonObjectMapper.DEFAULT_TIME_FORMAT)));
+            }
+        });
+    }*/
 }

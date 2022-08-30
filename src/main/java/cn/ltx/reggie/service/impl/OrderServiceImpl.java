@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -165,5 +166,40 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         orderDetailService.saveBatch(orderDetailList);
 
         return R.success("再来一旦成功");
+    }
+
+    /**
+     * 后台订单列表条件分页查询
+     * @param page
+     * @param pageSize
+     * @param number
+     * @param beginTime
+     * @param endTime
+     * @return
+     */
+    @Override
+    public R<IPage<OrdersDto>> page(int page, int pageSize, String number, String beginTime, String endTime) {
+        IPage<Orders> pageInfo = new Page<>(page, pageSize);
+        QueryWrapper<Orders> wrapper = new QueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(StringUtils.trim(number)), "number", number);
+        if(beginTime != null && endTime != null){
+            wrapper.between("order_time", beginTime, endTime);
+        }
+        wrapper.orderByDesc("order_time");
+        pageInfo = this.page(pageInfo, wrapper);
+        IPage<OrdersDto> ordersDtoIPage = new Page<>();
+        BeanUtils.copyProperties(pageInfo, ordersDtoIPage,"records");
+        List<OrdersDto> ordersDtoList = pageInfo.getRecords().stream().map((item) -> {
+            OrdersDto ordersDto = new OrdersDto();
+            BeanUtils.copyProperties(item, ordersDto);
+            Long orderId = item.getId();
+            List<OrderDetail> orderDetailList = orderDetailService.list(new QueryWrapper<OrderDetail>().eq("order_id", orderId));
+            if (orderDetailList != null && orderDetailList.size() > 0) {
+                ordersDto.setOrderDetails(orderDetailList);
+            }
+            return ordersDto;
+        }).collect(Collectors.toList());
+        ordersDtoIPage.setRecords(ordersDtoList);
+        return R.success(ordersDtoIPage);
     }
 }
